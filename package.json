@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "publish": "rm -r docs/assets && rm docs/index.html && vite build && mv dist/* docs/",
     "preview": "vite preview"
   },
   "dependencies": {

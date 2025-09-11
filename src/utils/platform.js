@@ -4,6 +4,12 @@ export const detectPlatform = (assetName) => {
   let os = "Other";
   let arch = "";
 
+  // Treat signature files as Other regardless of name contents
+  // e.g., *.tar.gz.sig, *.rpm.sig
+  if (name.endsWith("sig")) {
+    return { os: "Other", arch: "", display: "Other" };
+  }
+
   // Detect OS
   if (
     name.includes("mac") ||
@@ -33,7 +39,8 @@ export const detectPlatform = (assetName) => {
   } else if (
     name.includes("ios") ||
     name.includes("iphone") ||
-    name.includes("ipad")
+    name.includes("ipad") ||
+    name.includes(".ipa")
   ) {
     os = "iOS";
   }
@@ -69,20 +76,21 @@ export const detectPlatform = (assetName) => {
 export const getOS = (userAgent) => {
   const ua = userAgent.toLowerCase();
 
+  // Detect iOS before macOS due to "like Mac OS X" in iOS UA
+  if (ua.includes("iphone") || ua.includes("ipad") || ua.includes("ipod") || ua.includes("ios")) {
+    return "iOS";
+  }
   if (ua.includes("mac os")) {
     return "macOS";
   }
   if (ua.includes("windows")) {
     return "Windows";
   }
-  if (ua.includes("linux")) {
-    return "Linux";
-  }
   if (ua.includes("android")) {
     return "Android";
   }
-  if (ua.includes("ios") || ua.includes("iphone") || ua.includes("ipad")) {
-    return "iOS";
+  if (ua.includes("linux")) {
+    return "Linux";
   }
 
   return "Other";

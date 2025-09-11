@@ -37,7 +37,7 @@ export function DownloadButton({ releases, userOS }) {
         className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
         download
       >
-        {platformEmojis[platform.display]} Download for {platform.display}
+        {platformEmojis[platform.os]} Download for {platform.display}
         <Download className="w-4 h-4" />
       </a>
       {sortedAssets.length > 1 && (
