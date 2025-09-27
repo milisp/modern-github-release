@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { GithubStar } from "@/components/github-star";
 
 function Home() {
   const [input, setInput] = useState('')
@@ -72,6 +73,7 @@ function Home() {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-8">
+            <GithubStar />
             <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
               GitHub Release Statistics
             </h1>

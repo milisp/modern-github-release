@@ -10,6 +10,7 @@ import { RepoInfo } from "./repo/RepoInfo";
 import { DownloadStats } from "./repo/DownloadStats";
 import { DownloadButton } from "./repo/DownloadButton";
 import { ReleasesSection } from "./repo/ReleasesSection";
+import { GithubStar } from "@/components/github-star";
 import { Skeleton } from "@/components/ui/skeleton";
 
 function GitHubStats() {
@@ -17,7 +18,12 @@ function GitHubStats() {
   const [platformStats, setPlatformStats] = useState({});
   const userOS = useMemo(() => getOS(navigator.userAgent), []);
 
-  const { data, isLoading, isError, error: queryError } = useQuery({
+  const {
+    data,
+    isLoading,
+    isError,
+    error: queryError,
+  } = useQuery({
     queryKey: ["github", owner, repo],
     queryFn: async () => {
       const [releasesData, repoData] = await Promise.all([
@@ -48,9 +54,10 @@ function GitHubStats() {
       <div className="container mx-auto px-4 py-4">
         {/* Header with Search */}
         <div className="mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+          <div className="flex mb-6 gap-1">
             <RepoHeader />
             <SearchBar />
+            <GithubStar />
           </div>
 
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 p-6">
@@ -75,7 +82,10 @@ function GitHubStats() {
               ) : (
                 <>
                   <RepoInfo repoInfo={data?.repoData} />
-                  <DownloadStats totalDownloads={totalDownloads} platformStats={platformStats} />
+                  <DownloadStats
+                    totalDownloads={totalDownloads}
+                    platformStats={platformStats}
+                  />
                 </>
               )}
             </div>
@@ -83,7 +93,7 @@ function GitHubStats() {
         </div>
 
         <DownloadButton releases={data?.releasesData} userOS={userOS} />
-        
+
         {isLoading ? (
           <div className="space-y-6">
             <Skeleton className="h-8 w-48 mb-4" />
