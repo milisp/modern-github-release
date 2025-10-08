@@ -1,5 +1,11 @@
 import { detectPlatform, platformEmojis } from "../utils/platform";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
+import { ArrowBigLeft, ArrowRight } from "lucide-react";
 
 function ReleaseTable({ release }) {
   // Group assets by platform and calculate totals
@@ -46,6 +52,19 @@ function ReleaseTable({ release }) {
         <p className="text-gray-600 text-sm">
           Released on {formatDate(release.published_at)}
         </p>
+        {release.body && (
+          <Collapsible className="mt-2 border rounded-md bg-gray-50">
+            <CollapsibleTrigger className="flex items-center gap-2 p-2 text-gray-700 hover:text-blue-600 transition-colors">
+              <ArrowRight className="w-4 h-4" />
+              <span className="font-medium truncate">Release note</span>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="px-3 pb-2 text-sm text-gray-800 bg-white rounded-b-md border-t">
+              <pre className="whitespace-pre-wrap font-mono text-sm leading-snug">
+                {release.body}
+              </pre>
+            </CollapsibleContent>
+          </Collapsible>
+        )}
       </div>
       <Tabs defaultValue={Object.keys(platformGroups)[0]} className="w-full">
         <div className="mb-2 overflow-x-auto">
