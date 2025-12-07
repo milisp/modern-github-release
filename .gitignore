@@ -32,3 +32,5 @@ next-env.d.ts
 
 docs/PROJECT_VISION.md
 docs/PROJECT_VISION.en.md
+
+.claude/
