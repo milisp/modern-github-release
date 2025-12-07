@@ -1,7 +1,13 @@
-import { Star, GitFork } from "lucide-react";
+import React from 'react'
+import { Star, GitFork } from 'lucide-react'
+import type { GitHubRepoInfo } from '../../utils/github'
 
-export function RepoInfo({ repoInfo }) {
-  if (!repoInfo) return null;
+interface RepoInfoProps {
+  repoInfo?: GitHubRepoInfo
+}
+
+export const RepoInfo: React.FC<RepoInfoProps> = ({ repoInfo }) => {
+  if (!repoInfo) return null
 
   return (
     <div className="flex-1">
@@ -59,5 +65,5 @@ export function RepoInfo({ repoInfo }) {
         )}
       </div>
     </div>
-  );
+  )
 }

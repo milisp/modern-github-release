@@ -1,34 +1,42 @@
-import { Download } from "lucide-react";
-import { detectPlatform, platformEmojis } from "../../utils/platform";
+import React from 'react'
+import { Download } from 'lucide-react'
+import { detectPlatform, platformEmojis } from '../../utils/platform'
+import type { GitHubRelease } from '../../utils/github'
+import type { OS } from '../../utils/platform'
 
-export function DownloadButton({ releases, userOS }) {
-  if (!releases || releases.length === 0) return null;
+interface DownloadButtonProps {
+  releases?: GitHubRelease[]
+  userOS?: OS
+}
+
+export const DownloadButton: React.FC<DownloadButtonProps> = ({ releases, userOS }) => {
+  if (!releases || releases.length === 0 || !userOS) return null
 
   // Find assets that match the user's OS
   const matchingAssets = releases[0].assets.filter((asset) => {
-    const platform = detectPlatform(asset.name);
-    return platform.os === userOS;
-  });
+    const platform = detectPlatform(asset.name)
+    return platform.os === userOS
+  })
 
-  if (matchingAssets.length === 0) return null;
+  if (matchingAssets.length === 0) return null
 
   // Sort assets by architecture preference
   const sortedAssets = matchingAssets.sort((a, b) => {
-    const platformA = detectPlatform(a.name);
-    const platformB = detectPlatform(b.name);
+    const platformA = detectPlatform(a.name)
+    const platformB = detectPlatform(b.name)
     // Prefer ARM64 for macOS (Apple Silicon), x64 for others
-    if (userOS === "macOS") {
-      if (platformA.arch === "ARM64" && platformB.arch !== "ARM64") return -1;
-      if (platformB.arch === "ARM64" && platformA.arch !== "ARM64") return 1;
+    if (userOS === 'macOS') {
+      if (platformA.arch === 'ARM64' && platformB.arch !== 'ARM64') return -1
+      if (platformB.arch === 'ARM64' && platformA.arch !== 'ARM64') return 1
     } else {
-      if (platformA.arch === "x64" && platformB.arch !== "x64") return -1;
-      if (platformB.arch === "x64" && platformA.arch !== "x64") return 1;
+      if (platformA.arch === 'x64' && platformB.arch !== 'x64') return -1
+      if (platformB.arch === 'x64' && platformA.arch !== 'x64') return 1
     }
-    return 0;
-  });
+    return 0
+  })
 
-  const recommendedAsset = sortedAssets[0];
-  const platform = detectPlatform(recommendedAsset.name);
+  const recommendedAsset = sortedAssets[0]
+  const platform = detectPlatform(recommendedAsset.name)
 
   return (
     <div className="mb-6 flex flex-col gap-2">
@@ -44,7 +52,7 @@ export function DownloadButton({ releases, userOS }) {
         <div className="text-sm text-gray-500">
           Other versions available:
           {sortedAssets.slice(1).map((asset, index) => {
-            const p = detectPlatform(asset.name);
+            const p = detectPlatform(asset.name)
             return (
               <a
                 key={index}
@@ -54,10 +62,10 @@ export function DownloadButton({ releases, userOS }) {
               >
                 {p.arch}
               </a>
-            );
+            )
           })}
         </div>
       )}
     </div>
-  );
+  )
 }

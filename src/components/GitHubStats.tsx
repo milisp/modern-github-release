@@ -1,52 +1,63 @@
-import { useState, useEffect, useMemo } from "react";
-import { useParams } from "react-router-dom";
-import { fetchReleases, fetchRepoInfo } from "../utils/github";
-import { getPlatformStats, getOS, detectPlatform } from "../utils/platform";
-import ErrorBack from "./ErrorBack";
-import { useQuery } from "@tanstack/react-query";
-import { RepoHeader } from "./repo/RepoHeader";
-import { SearchBar } from "./repo/SearchBar";
-import { RepoInfo } from "./repo/RepoInfo";
-import { DownloadStats } from "./repo/DownloadStats";
-import { DownloadButton } from "./repo/DownloadButton";
-import { ReleasesSection } from "./repo/ReleasesSection";
-import { GithubStar } from "@/components/github-star";
-import { Skeleton } from "@/components/ui/skeleton";
+import React, { useState, useEffect, useMemo } from 'react'
+import { useParams } from 'react-router-dom'
+import { fetchReleases, fetchRepoInfo } from '../utils/github'
+import { getPlatformStats, getOS } from '../utils/platform'
+import ErrorBack from './ErrorBack'
+import { useQuery } from '@tanstack/react-query'
+import { RepoHeader } from './repo/RepoHeader'
+import { SearchBar } from './repo/SearchBar'
+import { RepoInfo } from './repo/RepoInfo'
+import { DownloadStats } from './repo/DownloadStats'
+import { DownloadButton } from './repo/DownloadButton'
+import { ReleasesSection } from './repo/ReleasesSection'
+import { GithubStar } from '@/components/github-star'
+import { Skeleton } from '@/components/ui/skeleton'
+import type { GitHubRelease, GitHubRepoInfo } from '../utils/github'
+import type { OS } from '../utils/platform'
 
-function GitHubStats() {
-  const { owner, repo } = useParams();
-  const [platformStats, setPlatformStats] = useState({});
-  const userOS = useMemo(() => getOS(navigator.userAgent), []);
+interface QueryData {
+  releasesData: GitHubRelease[]
+  repoData: GitHubRepoInfo
+}
+
+const GitHubStats: React.FC = () => {
+  const { owner, repo } = useParams<{ owner: string; repo: string }>()
+  const [platformStats, setPlatformStats] = useState<Record<string, number>>({})
+  const userOS = useMemo(() => getOS(navigator.userAgent), [])
 
   const {
     data,
     isLoading,
     isError,
     error: queryError,
-  } = useQuery({
-    queryKey: ["github", owner, repo],
+  } = useQuery<QueryData>({
+    queryKey: ['github', owner, repo],
     queryFn: async () => {
+      if (!owner || !repo) {
+        throw new Error('Owner and repo are required')
+      }
       const [releasesData, repoData] = await Promise.all([
         fetchReleases(owner, repo),
         fetchRepoInfo(owner, repo),
-      ]);
-      return { releasesData, repoData };
+      ])
+      return { releasesData, repoData }
     },
-  });
+    enabled: !!owner && !!repo,
+  })
 
   useEffect(() => {
     if (data) {
-      setPlatformStats(getPlatformStats(data.releasesData));
+      setPlatformStats(getPlatformStats(data.releasesData))
     }
-  }, [data]);
+  }, [data])
 
   const totalDownloads = Object.values(platformStats).reduce(
     (sum, count) => sum + count,
-    0,
-  );
+    0
+  )
 
   if (isError) {
-    return <ErrorBack message={queryError.message} />;
+    return <ErrorBack message={queryError?.message || 'Failed to fetch data'} />
   }
 
   return (
@@ -60,7 +71,7 @@ function GitHubStats() {
             <GithubStar />
           </div>
 
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 p-6">
+          <div className="bg-card/80 backdrop-blur-sm rounded-xl shadow-lg border p-6">
             <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
               {isLoading ? (
                 <>
@@ -98,7 +109,7 @@ function GitHubStats() {
           <div className="space-y-6">
             <Skeleton className="h-8 w-48 mb-4" />
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white rounded-lg shadow-md p-6 mb-6">
+              <div key={i} className="bg-card rounded-lg shadow-md p-6 mb-6">
                 <Skeleton className="h-6 w-72 mb-4" />
                 <Skeleton className="h-4 w-48 mb-6" />
                 <div className="space-y-4">
@@ -114,7 +125,7 @@ function GitHubStats() {
         )}
       </div>
     </div>
-  );
+  )
 }
 
-export default GitHubStats;
+export default GitHubStats

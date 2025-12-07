@@ -1,64 +1,70 @@
-import { detectPlatform, platformEmojis } from "../utils/platform";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import React from 'react'
+import { detectPlatform, platformEmojis } from '../utils/platform'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible"
-import { ArrowBigLeft, ArrowRight } from "lucide-react";
+} from '@/components/ui/collapsible'
+import { ArrowRight } from 'lucide-react'
+import type { GitHubRelease } from '../utils/github'
 
-function ReleaseTable({ release }) {
+interface ReleaseTableProps {
+  release: GitHubRelease
+}
+
+const ReleaseTable: React.FC<ReleaseTableProps> = ({ release }) => {
   // Group assets by platform and calculate totals
-  const platformGroups = {};
-  const platformTotal = {};
+  const platformGroups: Record<string, typeof release.assets> = {}
+  const platformTotal: Record<string, number> = {}
 
   release.assets.forEach((asset) => {
-    const platform = detectPlatform(asset.name);
-    const os = platform.os; // os as key
+    const platform = detectPlatform(asset.name)
+    const os = platform.os // os as key
     if (!platformGroups[os]) {
-      platformGroups[os] = [];
-      platformTotal[os] = 0;
+      platformGroups[os] = []
+      platformTotal[os] = 0
     }
-    platformGroups[os].push(asset);
-    platformTotal[os] += asset.download_count;
-  });
+    platformGroups[os].push(asset)
+    platformTotal[os] += asset.download_count
+  })
 
-  const formatFileSize = (bytes) => {
-    if (bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-  };
+  const formatFileSize = (bytes: number): string => {
+    if (bytes === 0) return '0 Bytes'
+    const k = 1024
+    const sizes = ['Bytes', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  }
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
+  const formatDate = (dateString: string): string => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })
+  }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 mb-1">
+    <div className="bg-card rounded-lg shadow-md p-4 mb-1">
       <div className="mb-1">
-        <h3 className="text-xl font-semibold text-gray-800 mb-1">
+        <h3 className="text-xl font-semibold text-foreground mb-1">
           {release.name || release.tag_name}(
           {Object.values(platformTotal)
             .reduce((a, b) => a + b, 0)
             .toLocaleString()}{" "}
           downloads)
         </h3>
-        <p className="text-gray-600 text-sm">
+        <p className="text-muted-foreground text-sm">
           Released on {formatDate(release.published_at)}
         </p>
         {release.body && (
-          <Collapsible className="mt-2 border rounded-md bg-gray-50">
-            <CollapsibleTrigger className="flex items-center gap-2 p-2 text-gray-700 hover:text-blue-600 transition-colors">
+          <Collapsible className="mt-2 border rounded-md bg-secondary">
+            <CollapsibleTrigger className="flex items-center gap-2 p-2 text-foreground hover:text-primary transition-colors">
               <ArrowRight className="w-4 h-4" />
               <span className="font-medium truncate">Release note</span>
             </CollapsibleTrigger>
-            <CollapsibleContent className="px-3 pb-2 text-sm text-gray-800 bg-white rounded-b-md border-t">
+            <CollapsibleContent className="px-3 pb-2 text-sm text-foreground bg-card rounded-b-md border-t">
               <pre className="whitespace-pre-wrap font-mono text-sm leading-snug">
                 {release.body}
               </pre>
@@ -87,7 +93,7 @@ function ReleaseTable({ release }) {
             <div className="overflow-x-auto">
               <table className="min-w-full">
                 <thead>
-                  <tr className="border-b border-gray-200">
+                  <tr className="border-b">
                     <th className="text-left py-0.5 px-2">Filename</th>
                     <th className="text-left py-0.5 px-2">Size</th>
                     <th className="text-left py-0.5 px-2">Downloads</th>
@@ -97,12 +103,12 @@ function ReleaseTable({ release }) {
                   {assets.map((asset) => (
                     <tr
                       key={asset.id}
-                      className="border-b border-gray-100 hover:bg-gray-50"
+                      className="border-b hover:bg-accent"
                     >
                       <td className="py-0.5 px-2">
                         <a
                           href={asset.browser_download_url}
-                          className="text-blue-500 hover:underline"
+                          className="text-primary hover:underline"
                           download
                         >
                           {asset.name}
@@ -123,7 +129,7 @@ function ReleaseTable({ release }) {
         ))}
       </Tabs>
     </div>
-  );
+  )
 }
 
-export default ReleaseTable;
+export default ReleaseTable

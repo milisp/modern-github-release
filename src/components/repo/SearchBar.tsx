@@ -1,54 +1,64 @@
-import { Search } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState, FormEvent } from 'react'
+import { Search } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
-export function SearchBar() {
-  const navigate = useNavigate();
-  const [searchInput, setSearchInput] = useState('');
-  const [history, setHistory] = useState([]);
-  const [focused, setFocused] = useState(false);
-  const STORAGE_KEY = 'repoSearchHistory';
+interface ParsedSearch {
+  searchOwner: string
+  searchRepo: string
+}
+
+export const SearchBar: React.FC = () => {
+  const navigate = useNavigate()
+  const [searchInput, setSearchInput] = useState('')
+  const [history, setHistory] = useState<string[]>([])
+  const [focused, setFocused] = useState(false)
+  const STORAGE_KEY = 'repoSearchHistory'
 
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = localStorage.getItem(STORAGE_KEY)
       if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) setHistory(parsed.slice(0, 5));
+        const parsed: unknown = JSON.parse(raw)
+        if (Array.isArray(parsed)) setHistory(parsed.slice(0, 5))
       }
-    } catch {}
-  }, []);
+    } catch {
+      // Silently fail on parse error
+    }
+  }, [])
 
-  const parseInput = (value) => {
-    let searchOwner, searchRepo;
-    if (!value) return null;
+  const parseInput = (value: string): ParsedSearch | null => {
+    let searchOwner: string | undefined
+    let searchRepo: string | undefined
+    if (!value) return null
     if (value.includes('github.com')) {
-      const match = value.match(/github\.com\/([^/]+)\/([^/]+)/);
+      const match = value.match(/github\.com\/([^/]+)\/([^/]+)/)
       if (match) {
-        searchOwner = match[1];
-        searchRepo = match[2];
+        searchOwner = match[1]
+        searchRepo = match[2]
       }
     } else if (value.includes('/')) {
-      const parts = value.split('/');
+      const parts = value.split('/')
       if (parts.length === 2) {
-        searchOwner = parts[0];
-        searchRepo = parts[1];
+        searchOwner = parts[0]
+        searchRepo = parts[1]
       }
     }
-    if (searchOwner && searchRepo) return { searchOwner, searchRepo };
-    return null;
-  };
+    if (searchOwner && searchRepo) return { searchOwner, searchRepo }
+    return null
+  }
 
-  const pushHistory = (owner, repo) => {
-    const entry = `${owner}/${repo}`;
-    const next = [entry, ...history.filter((h) => h !== entry)].slice(0, 5);
-    setHistory(next);
+  const pushHistory = (owner: string, repo: string) => {
+    const entry = `${owner}/${repo}`
+    const next = [entry, ...history.filter((h) => h !== entry)].slice(0, 5)
+    setHistory(next)
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-    } catch {}
-  };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+    } catch {
+      // Silently fail on storage error
+    }
+  }
 
-  const handleSearch = (e) => {
+  const handleSearch = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!searchInput.trim()) return
 
@@ -104,5 +114,5 @@ export function SearchBar() {
         )}
       </div>
     </form>
-  );
+  )
 }

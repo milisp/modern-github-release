@@ -1,4 +1,11 @@
-export function DownloadStats({ totalDownloads, platformStats }) {
+import React from 'react'
+
+interface DownloadStatsProps {
+  totalDownloads: number
+  platformStats: Record<string, number>
+}
+
+export const DownloadStats: React.FC<DownloadStatsProps> = ({ totalDownloads, platformStats }) => {
   return (
     <>
       {/* Total Downloads */}
@@ -24,9 +31,9 @@ export function DownloadStats({ totalDownloads, platformStats }) {
                 {platform}
               </div>
             </div>
-          ) : null,
+          ) : null
         )}
       </div>
     </>
-  );
+  )
 }
