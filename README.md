@@ -26,14 +26,6 @@ bun dev
 
 Then open the printed local URL in your browser.
 
-Using npm or pnpm:
-```sh
-git clone https://github.com/milisp/modern-github-release
-cd modern-github-release
-npm install  # or pnpm i
-npm run dev
-```
-
 ## Usage
 - Enter an `owner/repo` (e.g. `facebook/react`) or a full GitHub URL (e.g. `https://github.com/owner/repo`).
 - The app fetches releases and asset download counts via the GitHub REST API, groups assets by platform, and shows totals.
@@ -45,9 +37,9 @@ npm run dev
 - Asset selection relies on filename heuristics (e.g. `darwin`, `.dmg`, `arm64`, `x64`, etc.). Naming outside common conventions may not be detected.
 
 ## Build & Deploy
-- Dev: `bun dev` or `npm run dev`.
-- Build: `bun run build` or `npm run build`.
-- GitHub Pages: this repo ships a `publish` script that builds and moves assets into `docs/` for Pages hosting: `npm run publish`.
+- Dev: `bun dev`
+- Build: `bun run build`
+- Deploy: this will auto deploy to `gh-pages` branch see [.github/workflows/build-docs.yml](.github/workflows/build-docs.yml)
 
 ## Tech Stack
 - React, Vite, Tailwind CSS
