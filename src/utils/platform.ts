@@ -20,6 +20,11 @@ export const detectPlatform = (assetName: string): PlatformInfo => {
     return { os: 'Other', arch: '', display: 'Other' }
   }
 
+  // Prioritize .app.tar.gz as macOS
+  if (name.endsWith('.app.tar.gz')) {
+    return { os: 'macOS', arch: '', display: 'macOS' }
+  }
+
   // Detect OS
   if (
     name.includes('mac') ||
