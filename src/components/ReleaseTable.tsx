@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/accordion"
 import { ArrowRight } from 'lucide-react'
 import type { GitHubRelease } from '../utils/github'
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface ReleaseTableProps {
   release: GitHubRelease
@@ -66,9 +68,9 @@ const ReleaseTable: React.FC<ReleaseTableProps> = ({ release }) => {
                 Release note
               </AccordionTrigger>
               <AccordionContent>
-                <pre className="overflow-x-auto">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
                   {release.body}
-                </pre>
+                </ReactMarkdown>
               </AccordionContent>
             </AccordionItem>
           </Accordion>
