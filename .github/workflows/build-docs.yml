@@ -13,17 +13,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        run: npm ci
+        run: bun install
 
       - name: Build and publish to docs
-        run: npm run publish
+        run: bun run publish
 
       - name: Commit and push changes
         run: |
