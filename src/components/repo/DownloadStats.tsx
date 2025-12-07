@@ -1,4 +1,5 @@
 import React from 'react'
+import { Card, CardContent } from '@/components/ui/card'
 
 interface DownloadStatsProps {
   totalDownloads: number
@@ -9,28 +10,29 @@ export const DownloadStats: React.FC<DownloadStatsProps> = ({ totalDownloads, pl
   return (
     <>
       {/* Total Downloads */}
-      <div className="text-center lg:text-right bg-blue-50 rounded-lg p-4 lg:min-w-[200px]">
-        <div className="text-3xl font-bold text-blue-800">
-          {totalDownloads.toLocaleString()}
-        </div>
-        <div className="text-sm text-blue-600 font-medium">Total Downloads</div>
-      </div>
+      <Card className="text-center">
+        <CardContent>
+          <div className="text-3xl font-bold">
+            {totalDownloads.toLocaleString()}
+          </div>
+          <div className="text-sm font-medium">Total Downloads</div>
+        </CardContent>
+      </Card>
 
       {/* Platform Statistics */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+      <div className="grid grid-cols-2 gap-2">
         {Object.entries(platformStats).map(([platform, count]) =>
           count > 0 ? (
-            <div
-              key={platform}
-              className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-3 text-center hover:shadow-md transition-shadow"
-            >
-              <div className="text-lg font-bold text-gray-800">
-                {count.toLocaleString()}
-              </div>
-              <div className="text-xs text-gray-600 truncate" title={platform}>
-                {platform}
-              </div>
-            </div>
+            <Card key={platform}>
+              <CardContent className="text-center">
+                <div className="text-lg font-bold">
+                  {count.toLocaleString()}
+                </div>
+                <div className="text-xs truncate" title={platform}>
+                  {platform}
+                </div>
+              </CardContent>
+            </Card>
           ) : null
         )}
       </div>

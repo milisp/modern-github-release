@@ -2,10 +2,11 @@ import React from 'react'
 import { detectPlatform, platformEmojis } from '../utils/platform'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible'
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 import { ArrowRight } from 'lucide-react'
 import type { GitHubRelease } from '../utils/github'
 
@@ -59,27 +60,28 @@ const ReleaseTable: React.FC<ReleaseTableProps> = ({ release }) => {
           Released on {formatDate(release.published_at)}
         </p>
         {release.body && (
-          <Collapsible className="mt-2 border rounded-md bg-secondary">
-            <CollapsibleTrigger className="flex items-center gap-2 p-2 text-foreground hover:text-primary transition-colors">
-              <ArrowRight className="w-4 h-4" />
-              <span className="font-medium truncate">Release note</span>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="px-3 pb-2 text-sm text-foreground bg-card rounded-b-md border-t">
-              <pre className="whitespace-pre-wrap font-mono text-sm leading-snug">
-                {release.body}
-              </pre>
-            </CollapsibleContent>
-          </Collapsible>
+          <Accordion type="single" collapsible>
+            <AccordionItem value="release-note">
+              <AccordionTrigger className="p-2">
+                Release note
+              </AccordionTrigger>
+              <AccordionContent>
+                <pre className="overflow-x-auto">
+                  {release.body}
+                </pre>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         )}
       </div>
       <Tabs defaultValue={Object.keys(platformGroups)[0]} className="w-full">
-        <div className="mb-2 overflow-x-auto">
-          <TabsList className="mb-1 w-auto inline-flex flex-nowrap min-w-full">
+        <div className="overflow-x-auto">
+          <TabsList className="w-auto inline-flex flex-nowrap min-w-full">
             {Object.entries(platformGroups).map(([platform, assets]) => (
               <TabsTrigger
                 key={platform}
                 value={platform}
-                className="px-2 py-1 flex items-center gap-2"
+                className="p-1 flex items-center"
               >
                 {platformEmojis[platform]} {platform} (
                 {platformTotal[platform].toLocaleString()})
@@ -108,7 +110,7 @@ const ReleaseTable: React.FC<ReleaseTableProps> = ({ release }) => {
                       <td className="py-0.5 px-2">
                         <a
                           href={asset.browser_download_url}
-                          className="text-primary hover:underline"
+                          className="text-blue-500 hover:underline"
                           download
                         >
                           {asset.name}
